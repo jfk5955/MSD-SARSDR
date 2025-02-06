@@ -14,7 +14,7 @@ def open_uart_connection(port, baudrate=250000, timeout=1):
 
 if __name__ == "__main__":
     # Replace '/dev/ttyUSB0' with the appropriate port for your system
-    port = '/dev/cu.usbserial-1120' 
+    port = '/dev/ttyUSB0' 
     ser = open_uart_connection(port)
 
     time.sleep(2)
