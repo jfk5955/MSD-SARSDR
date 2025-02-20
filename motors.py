@@ -1,9 +1,10 @@
 import serial
 import time
 
+
 def setup_motors(step_size=80):
     # MACos usb port name
-    port='/dev/tty.usbserial-1130'
+    port='/dev/tty.usbserial-1120'
     # Linux USB number depends on the order the USBs were plugged in
     #port = '/dev/ttyUSB0'
     try:
@@ -25,7 +26,13 @@ def setup_motors(step_size=80):
         time.sleep(2)   # Wait for connection to be fully established before sending more commands
     
 def drive_motors(step_size=100, distance=5, feed_rate=6000, wait_time=2):
+    print(f"Driving motors:\n   Distance = {distance}\n   Step Size = {step_size}\n   Speed = {feed_rate}")
     jog = f"G0 X{step_size} Y{step_size} Z{step_size} E{step_size} F{feed_rate}\r\n"
     for i in range(distance):
         time.sleep(wait_time)
         uart.write(jog.encode())
+        
+if __name__ == "__main__":
+    setup_motors()
+    drive_motors()
+        

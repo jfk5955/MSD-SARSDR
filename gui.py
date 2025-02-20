@@ -10,20 +10,22 @@ def start_gui():
     step_var=tk.StringVar()
     speed_var=tk.StringVar()
     
-    root.title('Test GUI')
-    distance_l = tk.Label(root, text = 'Distance', font=('calibre',10, 'bold'))
-    distance_e = tk.Entry(root, textvariable = distance_var, font=('calibre',10,'normal'))
+    scale = 1.5
     
-    step_size_l = tk.Label(root, text = 'Step size', font=('calibre',10, 'bold'))
-    step_size_e = tk.Entry(root, textvariable = step_var, font=('calibre',10,'normal'))
+    root.title('Pluto GUI')
+    distance_l = tk.Label(root, text = 'Distance', font=('calibre',int(scale*15), 'bold'))
+    distance_e = tk.Entry(root, textvariable = distance_var, font=('calibre',int(scale*15),'normal'))
     
-    speed_l = tk.Label(root, text = 'Speed', font=('calibre',10, 'bold'))
-    speed_e = tk.Entry(root, textvariable = speed_var, font=('calibre',10,'normal'))
+    step_size_l = tk.Label(root, text = 'Step size', font=('calibre',int(scale*15), 'bold'))
+    step_size_e = tk.Entry(root, textvariable = step_var, font=('calibre',int(scale*15),'normal'))
     
-    setup_b = tk.Button(root, text='Setup motors', width=25, command=motors.setup_motors)
-    drive_b = tk.Button(root, text='Drive motors', width=25, command=lambda: main.drive_motors(distance_var, step_var, speed_var))
-    collect_b = tk.Button(root, text='Start data collection', width=25, command=lambda: main.collect_data(distance_var, step_var, speed_var))
-    kill_b = tk.Button(root, text='Kill', width=25, command=root.destroy)
+    speed_l = tk.Label(root, text = 'Speed', font=('calibre',int(scale*15), 'bold'))
+    speed_e = tk.Entry(root, textvariable = speed_var, font=('calibre',int(scale*15),'normal'))
+    
+    setup_b = tk.Button(root, text='Setup motors', font=('calibre',int(scale*15),'normal'), height=int(scale*1), width=int(scale*15), command=motors.setup_motors)
+    drive_b = tk.Button(root, text='Drive motors', font=('calibre',int(scale*15),'normal'), height=int(scale*1), width=int(scale*15), command=lambda: main.drive_motors(distance_var, step_var, speed_var))
+    collect_b = tk.Button(root, text='Start data collection', font=('calibre',int(scale*15),'normal'), height=int(scale*1), width=int(scale*15), command=lambda: main.collect_data(distance_var, step_var, speed_var))
+    kill_b = tk.Button(root, text='Kill', font=('calibre',int(scale*15),'normal'), height=int(scale*1), width=int(scale*15), bg='red', command=lambda: main.kill(root))
     
     i = 0
     distance_l.grid(row=i, column=0)
