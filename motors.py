@@ -3,7 +3,7 @@ import time
 
 def setup_motors(step_size=80):
     # MACos usb port name
-    port='/dev/tty.usbserial-1120'
+    port='/dev/tty.usbserial-1130'
     # Linux USB number depends on the order the USBs were plugged in
     #port = '/dev/ttyUSB0'
     try:
@@ -24,11 +24,8 @@ def setup_motors(step_size=80):
         uart.write(setup.encode())
         time.sleep(2)   # Wait for connection to be fully established before sending more commands
     
-def drive_motors(step_size=100, distance=5, wait_time=2, feed_rate=6000):
+def drive_motors(step_size=100, distance=5, feed_rate=6000, wait_time=2):
     jog = f"G0 X{step_size} Y{step_size} Z{step_size} E{step_size} F{feed_rate}\r\n"
-    print("attempting to drive")
     for i in range(distance):
-        print(i)
-        uart.write(jog.encode())
-        response = uart.readline().decode().strip()  # Read response
         time.sleep(wait_time)
+        uart.write(jog.encode())
