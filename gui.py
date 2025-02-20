@@ -9,23 +9,38 @@ def start_gui():
     distance_var=tk.StringVar()
     step_var=tk.StringVar()
     speed_var=tk.StringVar()
+    wait_var=tk.StringVar()
     
     scale = 1.5
+    fontNormal = ('calibre',int(scale*15),'normal')
+    fontBold = ('calibre',int(scale*15),'bold')
+    buttonHeight = int(scale*1)
+    buttonWidth = int(scale*15)
     
     root.title('Pluto GUI')
-    distance_l = tk.Label(root, text = 'Distance', font=('calibre',int(scale*15), 'bold'))
-    distance_e = tk.Entry(root, textvariable = distance_var, font=('calibre',int(scale*15),'normal'))
+    distance_l = tk.Label(root, text = 'Distance', font=fontBold)
+    distance_e = tk.Entry(root, textvariable = distance_var, font=fontNormal)
     
-    step_size_l = tk.Label(root, text = 'Step size', font=('calibre',int(scale*15), 'bold'))
-    step_size_e = tk.Entry(root, textvariable = step_var, font=('calibre',int(scale*15),'normal'))
+    step_size_l = tk.Label(root, text = 'Step size', font=fontBold)
+    step_size_e = tk.Entry(root, textvariable = step_var, font=fontNormal)
     
-    speed_l = tk.Label(root, text = 'Speed', font=('calibre',int(scale*15), 'bold'))
-    speed_e = tk.Entry(root, textvariable = speed_var, font=('calibre',int(scale*15),'normal'))
+    speed_l = tk.Label(root, text = 'Speed', font=fontBold)
+    speed_e = tk.Entry(root, textvariable = speed_var, font=fontNormal)
     
-    setup_b = tk.Button(root, text='Setup motors', font=('calibre',int(scale*15),'normal'), height=int(scale*1), width=int(scale*15), command=motors.setup_motors)
-    drive_b = tk.Button(root, text='Drive motors', font=('calibre',int(scale*15),'normal'), height=int(scale*1), width=int(scale*15), command=lambda: main.drive_motors(distance_var, step_var, speed_var))
-    collect_b = tk.Button(root, text='Start data collection', font=('calibre',int(scale*15),'normal'), height=int(scale*1), width=int(scale*15), command=lambda: main.collect_data(distance_var, step_var, speed_var))
-    kill_b = tk.Button(root, text='Kill', font=('calibre',int(scale*15),'normal'), height=int(scale*1), width=int(scale*15), bg='red', command=lambda: main.kill(root))
+    wait_l = tk.Label(root, text = 'Wait time', font=fontBold)
+    wait_e = tk.Entry(root, textvariable = wait_var, font=fontNormal)
+    
+    setup_b = tk.Button(root, text='Setup motors', font=fontNormal, height=buttonHeight, width=buttonWidth, 
+                        command=motors.setup_motors)
+                        
+    drive_b = tk.Button(root, text='Drive motors', font=fontNormal, height=buttonHeight, width=buttonWidth, 
+                        command=lambda: main.drive_motors(distance_var, step_var, speed_var, wait_var))
+                        
+    collect_b = tk.Button(root, text='Start data collection', font=fontNormal, height=buttonHeight, width=buttonWidth, 
+                          command=lambda: main.collect_data(distance_var, step_var, speed_var, wait_var))
+                          
+    kill_b = tk.Button(root, text='Kill', font=fontNormal, height=buttonHeight, width=buttonWidth, bg='red', 
+                       command=lambda: main.kill(root))
     
     i = 0
     distance_l.grid(row=i, column=0)
@@ -36,6 +51,9 @@ def start_gui():
     i += 1
     speed_l.grid(row=i, column=0)
     speed_e.grid(row=i, column=1)
+    i += 1
+    wait_l.grid(row=i, column=0)
+    wait_e.grid(row=i, column=1)
     i += 1
     setup_b.grid(row=i, column=0, columnspan=2)
     i += 1
