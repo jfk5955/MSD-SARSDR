@@ -1,13 +1,11 @@
 import serial
-import threading
 import time
-
 
 def setup_motors(step_size=80):
     # MACos usb port name
     #port='/dev/tty.usbserial-120'
     # Linux USB number depends on the order the USBs were plugged in
-    port = '/dev/ttyUSB0'
+    port = '/dev/ttyUSB1'
     try:
         global uart
         uart = serial.Serial(port, 250000, timeout=1)

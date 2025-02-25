@@ -1,7 +1,8 @@
 from PyThreadKiller import PyThreadKiller
-
 import gui
 import motors
+import tkinter as tk
+import time
 
 def kill(root):
     if motorThread:
@@ -29,10 +30,11 @@ def decode_inputs(distance_var, step_var, speed_var, wait_var):
     return distance, step_size, speed, wait
 
 
-def drive_motors(distance_var, step_var, speed_var, wait_var):
+def drive_motors(plutoGui, distance_var, step_var, speed_var, wait_var):
     distance, step_size, speed, wait = decode_inputs(distance_var, step_var, speed_var, wait_var)
     global motorThread
     motorThread = PyThreadKiller(target=motors.drive_motors, args=(distance, step_size, speed, wait), daemon=True)
+    plutoGui.log_message("driving motors")
     motorThread.start()
         
 def collect_data(distance_var, step_var, speed_var, wait_var):
@@ -47,5 +49,6 @@ def collect_data(distance_var, step_var, speed_var, wait_var):
     
 
 if __name__ == "__main__":
-    gui.start_gui()
+    root = tk.Tk(screenName=None, baseName=None, className='Tk', useTk=1)
+    plutoGui = gui.GUI(root)
     
