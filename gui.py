@@ -9,6 +9,7 @@ class GUI:
         step_var=tk.StringVar()
         speed_var=tk.StringVar()
         wait_var=tk.StringVar()
+        port_var=tk.StringVar()
         
         scale = 1.5
         fontNormal = ('calibre',int(scale*15),'normal')
@@ -35,7 +36,11 @@ class GUI:
         wait_e = tk.Entry(root, textvariable = wait_var, font=fontNormal)
         wait_e.insert(0, motors.getDefaultWait())
         
-        setup_b = tk.Button(root, text='Setup motors', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: motors.setup_motors(self))
+        port_l = tk.Label(root, text = 'Port path', font=fontBold)
+        port_e = tk.Entry(root, textvariable = port_var, font=fontNormal)
+        port_e.insert(0, motors.getDefaultPort())
+        
+        setup_b = tk.Button(root, text='Setup motors', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: motors.setup_motors(self, port_var))
                             
         drive_b = tk.Button(root, text='Drive motors', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: main.drive_motors(self, distance_var, step_var, speed_var, wait_var))
                             
@@ -48,7 +53,7 @@ class GUI:
         i = 0
         distance_l.grid(row=i, column=0)
         distance_e.grid(row=i, column=1)
-        self.log_t.grid(row=i, column=2, rowspan=4)
+        self.log_t.grid(row=i, column=2, rowspan=4, columnspan=2)
         i += 1
         step_size_l.grid(row=i, column=0)
         step_size_e.grid(row=i, column=1)
@@ -60,6 +65,8 @@ class GUI:
         wait_e.grid(row=i, column=1)
         i += 1
         setup_b.grid(row=i, column=0, columnspan=2)
+        port_l.grid(row=i, column=2)
+        port_e.grid(row=i, column=3)
         i += 1
         drive_b.grid(row=i, column=0, columnspan=2)
         i += 1
