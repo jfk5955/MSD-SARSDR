@@ -16,28 +16,32 @@ class GUI:
         buttonHeight = int(scale*1)
         buttonWidth = int(scale*15)
         textBoxHeight = int(scale*10)
-        textBoxWidth = int(scale*20)
+        textBoxWidth = int(scale*40)
         
         root.title('Pluto GUI')
         distance_l = tk.Label(root, text = 'Distance', font=fontBold)
         distance_e = tk.Entry(root, textvariable = distance_var, font=fontNormal)
+        distance_e.insert(0, motors.getDefaultDistance())
         
         step_size_l = tk.Label(root, text = 'Step size', font=fontBold)
         step_size_e = tk.Entry(root, textvariable = step_var, font=fontNormal)
+        step_size_e.insert(0, motors.getDefaultStepSize())
         
         speed_l = tk.Label(root, text = 'Speed', font=fontBold)
         speed_e = tk.Entry(root, textvariable = speed_var, font=fontNormal)
+        speed_e.insert(0, motors.getDefaultSpeed())
         
         wait_l = tk.Label(root, text = 'Wait time', font=fontBold)
         wait_e = tk.Entry(root, textvariable = wait_var, font=fontNormal)
+        wait_e.insert(0, motors.getDefaultWait())
         
-        setup_b = tk.Button(root, text='Setup motors', font=fontNormal, height=buttonHeight, width=buttonWidth, command=motors.setup_motors)
+        setup_b = tk.Button(root, text='Setup motors', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: motors.setup_motors(self))
                             
         drive_b = tk.Button(root, text='Drive motors', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: main.drive_motors(self, distance_var, step_var, speed_var, wait_var))
                             
-        collect_b = tk.Button(root, text='Start data collection', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: main.collect_data(distance_var, step_var, speed_var, wait_var))
+        collect_b = tk.Button(root, text='Start data collection', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: main.collect_data(self, distance_var, step_var, speed_var, wait_var))
                             
-        kill_b = tk.Button(root, text='Kill', font=fontNormal, height=buttonHeight, width=buttonWidth, bg='red', command=lambda: main.kill(root))
+        kill_b = tk.Button(root, text='Kill', font=fontNormal, height=buttonHeight, width=buttonWidth, bg='red', command=lambda: main.kill(self, root))
                         
         self.log_t = scrolledtext.ScrolledText(root, wrap=tk.WORD, height=textBoxHeight, width=textBoxWidth, state=tk.DISABLED)
         
