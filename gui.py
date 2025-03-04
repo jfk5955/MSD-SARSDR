@@ -6,7 +6,8 @@ import motors
 class GUI:
     def __init__(self, root):        
         distance_var=tk.StringVar()
-        step_var=tk.StringVar()
+        step_size_var=tk.StringVar()
+        step_count_var=tk.StringVar()
         speed_var=tk.StringVar()
         wait_var=tk.StringVar()
         port_var=tk.StringVar()
@@ -24,9 +25,13 @@ class GUI:
         distance_e = tk.Entry(root, textvariable = distance_var, font=fontNormal)
         distance_e.insert(0, motors.getDefaultDistance())
         
-        step_size_l = tk.Label(root, text = 'Step size', font=fontBold)
-        step_size_e = tk.Entry(root, textvariable = step_var, font=fontNormal)
+        step_size_l = tk.Label(root, text = 'Step Size', font=fontBold)
+        step_size_e = tk.Entry(root, textvariable = step_size_var, font=fontNormal)
         step_size_e.insert(0, motors.getDefaultStepSize())
+        
+        step_count_l = tk.Label(root, text = '# of Steps', font=fontBold)
+        step_count_e = tk.Entry(root, textvariable = step_count_var, font=fontNormal)
+        step_count_e.insert(0, motors.getDefaultStepCount())
         
         speed_l = tk.Label(root, text = 'Speed', font=fontBold)
         speed_e = tk.Entry(root, textvariable = speed_var, font=fontNormal)
@@ -40,11 +45,11 @@ class GUI:
         port_e = tk.Entry(root, textvariable = port_var, font=fontNormal)
         port_e.insert(0, motors.getDefaultPort())
         
-        setup_b = tk.Button(root, text='Setup motors', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: motors.setup_motors(self, port_var))
+        setup_b = tk.Button(root, text='Setup motors', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: motors.setup_motors(self, port_var, step_size_var))
                             
-        drive_b = tk.Button(root, text='Drive motors', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: main.drive_motors(self, distance_var, step_var, speed_var, wait_var))
+        drive_b = tk.Button(root, text='Drive motors', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: main.drive_motors(self, distance_var, step_count_var, speed_var, wait_var))
                             
-        collect_b = tk.Button(root, text='Start data collection', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: main.collect_data(self, distance_var, step_var, speed_var, wait_var))
+        collect_b = tk.Button(root, text='Start data collection', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: main.collect_data(self, distance_var, step_count_var, speed_var, wait_var))
                             
         kill_b = tk.Button(root, text='Kill', font=fontNormal, height=buttonHeight, width=buttonWidth, bg='red', command=lambda: main.kill(self, root))
                         
@@ -55,8 +60,8 @@ class GUI:
         distance_e.grid(row=i, column=1)
         self.log_t.grid(row=i, column=2, rowspan=4, columnspan=2)
         i += 1
-        step_size_l.grid(row=i, column=0)
-        step_size_e.grid(row=i, column=1)
+        step_count_l.grid(row=i, column=0)
+        step_count_e.grid(row=i, column=1)
         i += 1
         speed_l.grid(row=i, column=0)
         speed_e.grid(row=i, column=1)
@@ -69,6 +74,8 @@ class GUI:
         port_e.grid(row=i, column=3)
         i += 1
         drive_b.grid(row=i, column=0, columnspan=2)
+        step_size_l.grid(row=i, column=2)
+        step_size_e.grid(row=i, column=3)
         i += 1
         collect_b.grid(row=i, column=0, columnspan=2)
         i += 1

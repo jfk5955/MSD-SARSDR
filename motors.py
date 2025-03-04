@@ -2,11 +2,13 @@ import serial
 import time
 
 defaultDistance = 5
-defaultStepSize = 100
+defaultStepSize = 80
+defaultStepCount = 100
 defaultSpeed = 6000
 defaultWait = 2
 
 uart = None
+motorsSetUp = False
 
 # MACos usb port name
 #port='/dev/tty.usbserial-120'
@@ -18,6 +20,9 @@ def getDefaultDistance():
     
 def getDefaultStepSize():
     return defaultStepSize
+
+def getDefaultStepCount():
+    return defaultStepCount
     
 def getDefaultSpeed():
     return defaultSpeed
@@ -28,11 +33,15 @@ def getDefaultWait():
 def getDefaultPort():
     return defaultPort
 
-def setup_motors(plutoGui, port_var, step_size=80):
+def setup_motors(plutoGui, port_var, step_size_var):
     if port_var.get():
         port = port_var.get()
     else:
         port = getDefaultPort()
+    if step_size_var.get():
+        step_size = step_size_var.get()
+    else:
+        step_size = getDefaultStepSize()
     
     try:
         global uart
@@ -51,19 +60,15 @@ def setup_motors(plutoGui, port_var, step_size=80):
                 "M203 X300 Y300 Z300 E300; match motor feed limits [units/s]\r\n")
         uart.write(setup.encode())
         time.sleep(2)   # Wait for setup to complete before sending more commands
+        global motorsSetUp
+        motorsSetUp = True
     
-def drive_motors(plutoGui, distance, step_size, feed_rate, wait_time):
-    jog = f"G0 X{step_size} Y{step_size} Z{step_size} E{step_size} F{feed_rate}\r\n"
-    try:
-        if uart.is_open:
-            plutoGui.log_message(f"Driving motors:\n   Distance = {distance}\n   Step Size = {step_size}\n   Speed = {feed_rate}")
-            for i in range(distance):
-                time.sleep(wait_time)
-                uart.write(jog.encode())
-            plutoGui.log_message(f"Done driving motors")
-        else:
-            plutoGui.log_message("UART is connection not open. Click 'Setup motors' and try again")
-    except Exception as e:
-        plutoGui.log_message(f"An error occurred: {e}")
+def drive_motors(plutoGui, distance, step_count, feed_rate, wait_time):
+    jog = f"G0 X{step_count} Y{step_count} Z{step_count} E{step_count} F{feed_rate}\r\n"
+    plutoGui.log_message(f"Driving motors:\n   Distance = {distance}\n   Step Size = {step_count}\n   Speed = {feed_rate}")
+    for i in range(distance):
+        time.sleep(wait_time)
+        uart.write(jog.encode())
+    plutoGui.log_message(f"Done driving motors")
         
 

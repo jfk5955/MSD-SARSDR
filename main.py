@@ -9,15 +9,15 @@ import collection
 motorThread = None
 collectThread = None
 
-def decode_inputs(distance_var, step_var, speed_var, wait_var):
+def decode_inputs(distance_var, step_count_var, speed_var, wait_var):
     if distance_var.get():
         distance = int(distance_var.get())
     else:
         distance = motors.getDefaultDistance()
-    if step_var.get():
-        step_size = int(step_var.get())
+    if step_count_var.get():
+        step_count = int(step_count_var.get())
     else:
-        step_size = motors.getDefaultStepSize()
+        step_count = motors.getDefaultStepCount()
     if speed_var.get():
         speed = int(speed_var.get())
     else:
@@ -26,7 +26,7 @@ def decode_inputs(distance_var, step_var, speed_var, wait_var):
         wait = float(wait_var.get())
     else:
         wait = motors.getDefaultWait()
-    return distance, step_size, speed, wait
+    return distance, step_count, speed, wait
 
 def kill(plutoGui, root):
     if motorThread:
@@ -35,31 +35,33 @@ def kill(plutoGui, root):
     if collectThread:
         collectThread.kill()
         plutoGui.log_message(f"Killed data collection")
-    try:
-        if motors.uart.is_open:
-            motors.uart.close()
-            plutoGui.log_message(f"Closed UART connection")
-    except Exception as e:
-        plutoGui.log_message(f"Tried closing UART connection but failed: {e}")
+    if motors.motorsSetUp:
+        motors.uart.close()
+        plutoGui.log_message(f"Closed UART connection")
+        motors.motorsSetUp = False
 
-def drive_motors(plutoGui, distance_var, step_var, speed_var, wait_var):
-    distance, step_size, speed, wait = decode_inputs(distance_var, step_var, speed_var, wait_var)
-    global motorThread
-    
-    motorThread = PyThreadKiller(target=motors.drive_motors, args=(plutoGui, distance, step_size, speed, wait), daemon=True)
-    
-    motorThread.start()
+def drive_motors(plutoGui, distance_var, step_count_var, speed_var, wait_var):
+    distance, step_count, speed, wait = decode_inputs(distance_var, step_count_var, speed_var, wait_var)
+    if motors.motorsSetUp:
+        global motorThread
+        motorThread = PyThreadKiller(target=motors.drive_motors, args=(plutoGui, distance, step_count, speed, wait), daemon=True)
+        motorThread.start()
+    else:
+        plutoGui.log_message("Motors are not set up. Click 'Setup motors' and try again")
         
-def collect_data(plutoGui, distance_var, step_var, speed_var, wait_var):
-    distance, step_size, speed, wait = decode_inputs(distance_var, step_var, speed_var, wait_var)
+def collect_data(plutoGui, distance_var, step_count_var, speed_var, wait_var):
+    distance, step_count, speed, wait = decode_inputs(distance_var, step_count_var, speed_var, wait_var)
     global motorThread
     global collectThread
     
-    motorThread = PyThreadKiller(target=motors.drive_motors, args=(plutoGui, distance, step_size, speed, wait), daemon=True)
-    collectThread = PyThreadKiller(target=collection.collect_data, args=(plutoGui), daemon=True).start()       #TODO: implement data collection code
-    
-    motorThread.start()
-    collectThread.start()
+    if motors.motorsSetUp:
+        motorThread = PyThreadKiller(target=motors.drive_motors, args=(plutoGui, distance, step_count, speed, wait), daemon=True)
+        collectThread = PyThreadKiller(target=collection.collect_data, args=(plutoGui), daemon=True).start()       #TODO: implement data collection code
+        
+        motorThread.start()
+        collectThread.start()
+    else:
+        plutoGui.log_message("Motors are not set up. Click 'Setup motors' and try again")
     
 
 if __name__ == "__main__":
