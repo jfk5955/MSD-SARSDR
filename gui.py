@@ -29,7 +29,7 @@ class GUI:
         step_size_e = tk.Entry(root, textvariable = step_size_var, font=fontNormal)
         step_size_e.insert(0, motors.getDefaultStepSize())
         
-        step_count_l = tk.Label(root, text = '# of Steps', font=fontBold)
+        step_count_l = tk.Label(root, text = '# of mm/step', font=fontBold)
         step_count_e = tk.Entry(root, textvariable = step_count_var, font=fontNormal)
         step_count_e.insert(0, motors.getDefaultStepCount())
         

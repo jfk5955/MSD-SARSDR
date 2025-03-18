@@ -2,8 +2,8 @@ import serial
 import time
 
 defaultDistance = 5
-defaultStepSize = 80
-defaultStepCount = 100
+defaultStepSize = 50 # steps/mm
+defaultStepCount = 100 # of mm
 defaultSpeed = 6000
 defaultWait = 2
 
@@ -55,7 +55,7 @@ def setup_motors(plutoGui, port_var, step_size_var):
         setup = ("G91; relative positioning\r\n"
                 "M302 S0; no cold extrusion check\r\n"
                 "M211 S0; no endstop check\r\n"
-                f"M92 X-{step_size} Y{step_size} Z{step_size} E{step_size}; Set step size & directions [steps/unit]\r\n"
+                f"M92 X{step_size} Y{step_size} Z{step_size} E-{step_size}; Set step size & directions [steps/unit]\r\n"
                 "M201 X2000 Y2000 Z2000 E3000; Set acceleration [units/s^2]\r\n"
                 "M203 X300 Y300 Z300 E300; match motor feed limits [units/s]\r\n")
         uart.write(setup.encode())
