@@ -26,6 +26,11 @@ def decode_inputs(distance_var, step_count_var, speed_var, wait_var):
         wait = float(wait_var.get())
     else:
         wait = motors.getDefaultWait()
+    
+    if reverse_var.get():
+        if bool(reverse_var.get()):
+            speed = -speed
+
     return distance, step_count, speed, wait
 
 def kill(plutoGui, root):

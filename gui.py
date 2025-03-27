@@ -11,6 +11,7 @@ class GUI:
         speed_var=tk.StringVar()
         wait_var=tk.StringVar()
         port_var=tk.StringVar()
+        reverse_var = tk.IntVar()
         
         scale = 1.5
         fontNormal = ('calibre',int(scale*15),'normal')
@@ -21,65 +22,69 @@ class GUI:
         textBoxWidth = int(scale*40)
         
         root.title('Pluto GUI')
-        distance_l = tk.Label(root, text = 'Distance', font=fontBold)
-        distance_e = tk.Entry(root, textvariable = distance_var, font=fontNormal)
-        distance_e.insert(0, motors.getDefaultDistance())
+        distance_label = tk.Label(root, text = 'Distance', font=fontBold)
+        distance_entry = tk.Entry(root, textvariable = distance_var, font=fontNormal)
+        distance_entry.insert(0, motors.getDefaultDistance())
         
-        step_size_l = tk.Label(root, text = 'Step Size', font=fontBold)
-        step_size_e = tk.Entry(root, textvariable = step_size_var, font=fontNormal)
-        step_size_e.insert(0, motors.getDefaultStepSize())
+        step_size_label = tk.Label(root, text = 'Step Size', font=fontBold)
+        step_size_entry = tk.Entry(root, textvariable = step_size_var, font=fontNormal)
+        step_size_entry.insert(0, motors.getDefaultStepSize())
         
-        step_count_l = tk.Label(root, text = '# of mm/step', font=fontBold)
-        step_count_e = tk.Entry(root, textvariable = step_count_var, font=fontNormal)
-        step_count_e.insert(0, motors.getDefaultStepCount())
+        step_count_label = tk.Label(root, text = '# of mm/step', font=fontBold)
+        step_count_entry = tk.Entry(root, textvariable = step_count_var, font=fontNormal)
+        step_count_entry.insert(0, motors.getDefaultStepCount())
         
-        speed_l = tk.Label(root, text = 'Speed', font=fontBold)
-        speed_e = tk.Entry(root, textvariable = speed_var, font=fontNormal)
-        speed_e.insert(0, motors.getDefaultSpeed())
+        speed_label = tk.Label(root, text = 'Speed', font=fontBold)
+        speed_entry = tk.Entry(root, textvariable = speed_var, font=fontNormal)
+        speed_entry.insert(0, motors.getDefaultSpeed())
         
-        wait_l = tk.Label(root, text = 'Wait time', font=fontBold)
-        wait_e = tk.Entry(root, textvariable = wait_var, font=fontNormal)
-        wait_e.insert(0, motors.getDefaultWait())
+        wait_label = tk.Label(root, text = 'Wait time', font=fontBold)
+        wait_entry = tk.Entry(root, textvariable = wait_var, font=fontNormal)
+        wait_entry.insert(0, motors.getDefaultWait())
         
-        port_l = tk.Label(root, text = 'Port path', font=fontBold)
-        port_e = tk.Entry(root, textvariable = port_var, font=fontNormal)
-        port_e.insert(0, motors.getDefaultPort())
+        port_label = tk.Label(root, text = 'Port path', font=fontBold)
+        port_entry = tk.Entry(root, textvariable = port_var, font=fontNormal)
+        port_entry.insert(0, motors.getDefaultPort())
         
-        setup_b = tk.Button(root, text='Setup motors', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: motors.setup_motors(self, port_var, step_size_var))
+        reverse_checkbox = tk.Checkbutton(root, text="Reverse", variable=reverse_var)
+        
+        setup_button = tk.Button(root, text='Setup motors', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: motors.setup_motors(self, port_var, step_size_var))
                             
-        drive_b = tk.Button(root, text='Drive motors', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: main.drive_motors(self, distance_var, step_count_var, speed_var, wait_var))
+        drive_button = tk.Button(root, text='Drive motors', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: main.drive_motors(self, distance_var, step_count_var, speed_var, wait_var))
                             
-        collect_b = tk.Button(root, text='Start data collection', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: main.collect_data(self, distance_var, step_count_var, speed_var, wait_var))
+        collect_button = tk.Button(root, text='Start data collection', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: main.collect_data(self, distance_var, step_count_var, speed_var, wait_var))
                             
-        kill_b = tk.Button(root, text='Kill', font=fontNormal, height=buttonHeight, width=buttonWidth, bg='red', command=lambda: main.kill(self, root))
+        kill_button = tk.Button(root, text='Kill', font=fontNormal, height=buttonHeight, width=buttonWidth, bg='red', command=lambda: main.kill(self, root))
                         
         self.log_t = scrolledtext.ScrolledText(root, wrap=tk.WORD, height=textBoxHeight, width=textBoxWidth, state=tk.DISABLED)
         
         i = 0
-        distance_l.grid(row=i, column=0)
-        distance_e.grid(row=i, column=1)
+        distance_label.grid(row=i, column=0)
+        distance_entry.grid(row=i, column=1)
         self.log_t.grid(row=i, column=2, rowspan=4, columnspan=2)
         i += 1
-        step_count_l.grid(row=i, column=0)
-        step_count_e.grid(row=i, column=1)
+        step_count_label.grid(row=i, column=0)
+        step_count_entry.grid(row=i, column=1)
         i += 1
-        speed_l.grid(row=i, column=0)
-        speed_e.grid(row=i, column=1)
+        speed_label.grid(row=i, column=0)
+        speed_entry.grid(row=i, column=1)
         i += 1
-        wait_l.grid(row=i, column=0)
-        wait_e.grid(row=i, column=1)
+        wait_label.grid(row=i, column=0)
+        wait_entry.grid(row=i, column=1)
         i += 1
-        setup_b.grid(row=i, column=0, columnspan=2)
-        port_l.grid(row=i, column=2)
-        port_e.grid(row=i, column=3)
+        reverse_checkbox.grid(row=i, column=0)
         i += 1
-        drive_b.grid(row=i, column=0, columnspan=2)
-        step_size_l.grid(row=i, column=2)
-        step_size_e.grid(row=i, column=3)
+        setup_button.grid(row=i, column=0, columnspan=2)
+        port_label.grid(row=i, column=2)
+        port_entry.grid(row=i, column=3)
         i += 1
-        collect_b.grid(row=i, column=0, columnspan=2)
+        drive_button.grid(row=i, column=0, columnspan=2)
+        step_size_label.grid(row=i, column=2)
+        step_size_entry.grid(row=i, column=3)
         i += 1
-        kill_b.grid(row=i, column=0, columnspan=2)
+        collect_button.grid(row=i, column=0, columnspan=2)
+        i += 1
+        kill_button.grid(row=i, column=0, columnspan=2)
         i += 1
         
         root.mainloop()
