@@ -1,4 +1,5 @@
-# File for waveform generation and data capture
+# File for single sawtooth waveform generation
+# Data capture is handled by PyQt CFAR GUI
 # Reference material: https://github.com/jonkraft/PhaserRadarLabs/blob/main
 # Garrett Brindle
 # Created: 03/26/2025
