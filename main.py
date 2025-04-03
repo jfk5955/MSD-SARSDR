@@ -9,7 +9,7 @@ import collection
 motorThread = None
 collectThread = None
 
-def decode_inputs(distance_var, step_count_var, speed_var, wait_var):
+def decode_inputs(distance_var, step_count_var, speed_var, wait_var, reverse_var):
     if distance_var.get():
         distance = int(distance_var.get())
     else:
@@ -29,7 +29,7 @@ def decode_inputs(distance_var, step_count_var, speed_var, wait_var):
     
     if reverse_var.get():
         if bool(reverse_var.get()):
-            speed = -speed
+            step_count = -step_count
 
     return distance, step_count, speed, wait
 
@@ -45,8 +45,8 @@ def kill(plutoGui, root):
         plutoGui.log_message(f"Closed UART connection")
         motors.motorsSetUp = False
 
-def drive_motors(plutoGui, distance_var, step_count_var, speed_var, wait_var):
-    distance, step_count, speed, wait = decode_inputs(distance_var, step_count_var, speed_var, wait_var)
+def drive_motors(plutoGui, distance_var, step_count_var, speed_var, wait_var, reverse_var):
+    distance, step_count, speed, wait = decode_inputs(distance_var, step_count_var, speed_var, wait_var, reverse_var)
     if motors.motorsSetUp:
         global motorThread
         motorThread = PyThreadKiller(target=motors.drive_motors, args=(plutoGui, distance, step_count, speed, wait), daemon=True)
@@ -54,8 +54,8 @@ def drive_motors(plutoGui, distance_var, step_count_var, speed_var, wait_var):
     else:
         plutoGui.log_message("Motors are not set up. Click 'Setup motors' and try again")
         
-def collect_data(plutoGui, distance_var, step_count_var, speed_var, wait_var):
-    distance, step_count, speed, wait = decode_inputs(distance_var, step_count_var, speed_var, wait_var)
+def collect_data(plutoGui, distance_var, step_count_var, speed_var, wait_var, reverse_var):
+    distance, step_count, speed, wait = decode_inputs(distance_var, step_count_var, speed_var, wait_var, reverse_var)
     global motorThread
     global collectThread
     
