@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import scrolledtext
 import main
 import motors
+import radar
 
 class GUI:
     def __init__(self, root):        
@@ -46,7 +47,9 @@ class GUI:
         
         reverse_checkbox = tk.Checkbutton(root, text="Reverse", font=fontSmall, height=checkBoxHeight, width=checkBoxWidth, variable=reverse_var)
         
-        setup_button = tk.Button(root, text='Setup motors', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: motors.setup_motors(self, port_var))
+        setup_motors_button = tk.Button(root, text='Setup motors', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: motors.setup_motors(self, port_var))
+        
+        setup_radar_button = tk.Button(root, text='Setup radar', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: radar.setup_radar(self))
                             
         drive_button = tk.Button(root, text='Drive motors', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: main.drive_motors(self, distance_var, step_count_var, speed_var, wait_var, reverse_var))
                             
@@ -70,9 +73,11 @@ class GUI:
         wait_label.grid(row=i, column=0)
         wait_entry.grid(row=i, column=1)
         i += 1
-        setup_button.grid(row=i, column=0, columnspan=2)
+        setup_motors_button.grid(row=i, column=0, columnspan=2)
         port_label.grid(row=i, column=2)
         port_entry.grid(row=i, column=3)
+        i += 1
+        setup_radar_button.grid(row=i, column=0, columnspan=2)
         i += 1
         drive_button.grid(row=i, column=0, columnspan=2)
         reverse_checkbox.grid(row=i, column=1, columnspan=2, sticky="e")

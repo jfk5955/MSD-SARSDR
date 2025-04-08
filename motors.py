@@ -63,5 +63,9 @@ def drive_motors(plutoGui, distance, step_count, feed_rate, wait_time):
         uart.write(jog.encode())
         time.sleep(wait_time)
     plutoGui.log_message(f"Done driving motors")
+    
+def step_once(step_count, feed_rate):
+    jog = f"G0 X{step_count} Y{step_count} Z{step_count} E{step_count} F{feed_rate}\r\n"
+    uart.write(jog.encode())
         
 

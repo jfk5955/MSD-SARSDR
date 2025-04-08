@@ -4,7 +4,7 @@ import time
 
 import gui
 import motors
-import collection
+import radar
 
 motorThread = None
 collectThread = None
@@ -53,21 +53,16 @@ def drive_motors(plutoGui, distance_var, step_count_var, speed_var, wait_var, re
         motorThread.start()
     else:
         plutoGui.log_message("Motors are not set up. Click 'Setup motors' and try again")
-        
+ 
 def collect_data(plutoGui, distance_var, step_count_var, speed_var, wait_var, reverse_var):
     distance, step_count, speed, wait = decode_inputs(distance_var, step_count_var, speed_var, wait_var, reverse_var)
-    global motorThread
-    global collectThread
     
     if motors.motorsSetUp:
-        motorThread = PyThreadKiller(target=motors.drive_motors, args=(plutoGui, distance, step_count, speed, wait), daemon=True)
-        collectThread = PyThreadKiller(target=collection.collect_data, args=(plutoGui), daemon=True).start()       #TODO: implement data collection code
-        
-        motorThread.start()
+        global collectThread
+        collectThread = PyThreadKiller(target=radar.collect_data, args=(plutoGui, distance, step_count, speed, wait), daemon=True).start()       #TODO: implement data collection code
         collectThread.start()
     else:
         plutoGui.log_message("Motors are not set up. Click 'Setup motors' and try again")
-    
 
 if __name__ == "__main__":
     root = tk.Tk(screenName=None, baseName=None, className='Tk', useTk=1)
