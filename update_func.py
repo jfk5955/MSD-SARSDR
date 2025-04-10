@@ -11,16 +11,23 @@
 import numpy as np
 from scipy.io import savemat
 
-# Create global array to share with load and update
-# 80 x 300 array with complex int or float type
+# Initialize update counter to store data
+update_cnt = 0
 
+# Create global array to share with load and update
+# 80 x 300 array with complex type
+rows, cols = 80, 300
+store = np.zeros((rows, cols), dtype=complex)
 
 def load():
     """
     Uses scipy library
     Saves 2D array to .mat file
     """
-    mdic = {"": temp_array, "label": "Data_04_08_25"}
+    mdic = {"data_mat": store, "label": "Data_04_10_25"}
+    # Save to a .mat file
+    savemat("data_mat.mat", mdic)
+    print("Matrix saved to 'data_mat.mat'")
 
 def update():
     """
@@ -48,3 +55,5 @@ def update():
         burst_data[start_offset_samples:(start_offset_samples + good_ramp_samples)] = rx_bursts[burst] * win_funct
     
     # Save the linear portion to array for later save
+    store[update_cnt, :] = burst_data
+    update_cnt += 1
