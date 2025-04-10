@@ -56,4 +56,4 @@ def update():
     
     # Save the linear portion to array for later save
     store[update_cnt, :] = burst_data
-    update_cnt += 1
+    update_cnt += num_chirps
