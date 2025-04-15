@@ -59,7 +59,7 @@ def collect_data(plutoGui, distance_var, step_count_var, speed_var, wait_var, re
     
     if motors.motorsSetUp:
         global collectThread
-        collectThread = PyThreadKiller(target=radar.collect_data, args=(plutoGui, distance, step_count, speed, wait), daemon=True).start()       #TODO: implement data collection code
+        collectThread = PyThreadKiller(target=radar.collect_data, args=(plutoGui, distance, step_count, speed, wait), daemon=True)
         collectThread.start()
     else:
         plutoGui.log_message("Motors are not set up. Click 'Setup motors' and try again")

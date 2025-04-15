@@ -1,6 +1,5 @@
 # Library imports
 import adi
-from datetime import datetime
 import numpy as np
 import os
 import sys
@@ -8,6 +7,7 @@ import time
 
 # Local imports
 import motors
+import update_func
 
 '''
 Standard device instantiation and setup
@@ -22,6 +22,7 @@ def setup_radar(plutoGui):
     default_chirp_bw = 500e6
     ramp_time = 500      # ramp time in us (micro seconds)
     num_slices = 100     # this sets how much time will be displayed on the waterfall plot
+    global fft_size
     fft_size = 1024 * 8
     plot_freq = 100e3    # x-axis freq range to plot
 
@@ -107,6 +108,7 @@ def setup_radar(plutoGui):
     tdd.startup_delay_ms = 0
     PRI_ms = ramp_time/1e3 + 1.0  # each chirp is spaced this far apart
     tdd.frame_length_ms = PRI_ms
+    global num_chirps
     num_chirps = 1
     tdd.burst_count = num_chirps       # number of chirps in one continuous receive buffer
 
@@ -138,13 +140,16 @@ def setup_radar(plutoGui):
     ramp_time_s = ramp_time / 1e6
     begin_offset_time = 0.10 * ramp_time_s   # time in seconds
     print("actual freq dev time = ", ramp_time)
+    global good_ramp_samples
     good_ramp_samples = int((ramp_time_s-begin_offset_time) * sample_rate)
     start_offset_time = tdd.channel[0].on_ms/1e3 + begin_offset_time
+    global start_offset_samples
     start_offset_samples = int(start_offset_time * sample_rate)
 
     # size the fft for the number of ramp data points
     power = 8
     fft_size = int(2**power)
+    global num_samples_frame
     num_samples_frame = int(tdd.frame_length_ms/1000*sample_rate)
     while num_samples_frame > fft_size:
         power = power+1
@@ -157,12 +162,12 @@ def setup_radar(plutoGui):
     total_time = tdd.frame_length_ms * num_chirps   # time in ms
     print("Total Time for all Chirps:  ", total_time, "ms")
     buffer_time = 0
-    power = 12
+    power = 6
     while total_time > buffer_time:
         power = power+1
         buffer_size = int(2**power)
         buffer_time = buffer_size/my_sdr.sample_rate*1000   # buffer time in ms
-        if power == 23:
+        if power == 6:
             break     # max pluto buffer size is 2**23, but for tdd burst mode, set to 2**22
     print("buffer_size:", buffer_size)
     my_sdr.rx_buffer_size = buffer_size
@@ -212,56 +217,23 @@ def setup_radar(plutoGui):
     
     plutoGui.log_message("Done setting up Pluto")
     
-def update(filename):
-    """
-    Updates the FFT
-	"""
-    global index, plot_threshold, freq, dist, plot_dist, ramp_time_s, sample_rate
-    my_phaser._gpios.gpio_burst = 0
-    my_phaser._gpios.gpio_burst = 1
-    my_phaser._gpios.gpio_burst = 0
-    data = my_sdr.rx()
-    chan1 = data[0]
-    chan2 = data[1]
-    sum_data = chan1 + chan2
-
-    # select just the linear portion of the last chirp
-    rx_bursts = np.zeros((num_chirps, good_ramp_samples), dtype=complex)
-    for burst in range(num_chirps):
-        start_index = start_offset_samples + burst * num_samples_frame
-        stop_index = start_index + good_ramp_samples
-        rx_bursts[burst] = sum_data[start_index:stop_index]
-        burst_data = np.ones(fft_size, dtype=complex) * 1e-10
-        # win_funct = np.blackman(len(rx_bursts[burst]))
-        win_funct = np.ones(len(rx_bursts[burst]))
-        burst_data[start_offset_samples:(start_offset_samples + good_ramp_samples)] = rx_bursts[burst] * win_funct
-        
-        '''
-        Write burst_data to file
-        '''
-        with open(filename, "a") as file:
-            file.write(burst_data)
 
 def collect_data(plutoGui, distance, step_count, speed, wait):
     plutoGui.log_message("Starting data collection")
     
-    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    filename = f"data/burst_data_{timestamp}.txt"
-    try:
-        os.makedirs(os.path.dirname(filename), exist_ok=True)
-        with open(filename, "x") as file:
-            plutoGui.log_message(f"Writing data to {filename}")
-            
-    except FileExistsError:
-        print("File already exists.")
+    # Create array to share with load and update
+    # 80 x 300 array with complex type
+    rows, cols = 32768, distance
+    store = np.zeros((rows, cols), dtype=complex)
     
     for i in range(distance):
-        update(filename)
+        update_func.update(store, i)
         plutoGui.log_message(f"data collect {i}")
         time.sleep(0.5)
-        motors.step_once(step_count, feed_rate)
+        motors.step_once(step_count, speed)
         plutoGui.log_message(f"motor step {i}")
         time.sleep(wait)
-    
+    update_func.load(store)
     
     plutoGui.log_message("Done collecting data")
+    
