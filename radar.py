@@ -16,6 +16,7 @@ def setup_radar(plutoGui):
     # KEY SETUP PARAMETERS
     sample_rate = 20e6    # Sample rate specific to Pluto
     center_freq = 2.1e9  # Pluto LO frequency - IF frequency
+    global output_freq, signal_freq
     signal_freq = 100e3  # Information being sent
     rx_gain = 20   # range: (-3, 70)
     output_freq = 10e9
@@ -223,16 +224,27 @@ def collect_data(plutoGui, distance, step_count, speed, wait):
     
     # Create array to share with load and update
     # 80 x 300 array with complex type
-    rows, cols = 32768, distance
-    store = np.zeros((rows, cols), dtype=complex)
+    rows, cols, pulses = 32768, distance, 10
+    store = np.zeros((rows, cols, pulse), dtype=complex)
     
     for i in range(distance):
-        update_func.update(store, i)
+        for i_pulse in range(pulses):
+            store = update_func.update(store, i, i_pulse)
         plutoGui.log_message(f"data collect {i}")
         time.sleep(0.5)
         motors.step_once(step_count, speed)
         plutoGui.log_message(f"motor step {i}")
         time.sleep(wait)
+
+    store["fast_time_dim"] = 1
+    store["sample_rate_Hz"] = my_sdr.sample_rate
+    store["ramp_bandwidth_Hz"] = my_sdr.freq_dev_range * 4
+    store["ramp_time_s"] = my_sdr.freq_dev_time
+    store["num_chirps"] = num_chirps
+    store["rx_gain_dB"] = my_sdr.rx_hardwaregain_chan0
+    store["intermediate_freq_Hz"] = my_sdr.rx_lo
+    store["radio_freq_Hz"] = output_freq
+    store["tone_freq_Hz"] = signal_freq
     update_func.load(store)
     
     plutoGui.log_message("Done collecting data")

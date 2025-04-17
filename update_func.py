@@ -25,7 +25,7 @@ def load(store):
     savemat(f"data/data_mat_{timestamp}.mat", mdic)
     print(f"Matrix saved to 'data_mat_{timestamp}.mat'")
 
-def update(store, update_cnt):
+def update(store, update_cnt, pulse):
     """
     Tells SDR to capture data
     Removes non-linear portion of received signal
@@ -51,4 +51,5 @@ def update(store, update_cnt):
         burst_data[radar.start_offset_samples:(radar.start_offset_samples + radar.good_ramp_samples)] = rx_bursts[burst] * win_funct
     
     # Save the linear portion to array for later save
-    store[:,update_cnt] = burst_data
+    store[:, update_cnt, pulse] = burst_data
+    return store
