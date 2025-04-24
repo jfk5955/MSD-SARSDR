@@ -11,6 +11,7 @@ class GUI:
         speed_var=tk.StringVar()
         wait_var=tk.StringVar()
         port_var=tk.StringVar()
+        comment_var=tk.StringVar()
         reverse_var = tk.IntVar()
         
         scale = 1.5
@@ -25,7 +26,7 @@ class GUI:
         textBoxWidth = int(scale*40)
         
         root.title('Pluto GUI')
-        distance_label = tk.Label(root, text = 'Distance', font=fontBold)
+        distance_label = tk.Label(root, text = 'Number of Steps', font=fontBold)
         distance_entry = tk.Entry(root, textvariable = distance_var, font=fontNormal)
         distance_entry.insert(0, motors.getDefaultDistance())
         
@@ -44,6 +45,10 @@ class GUI:
         port_label = tk.Label(root, text = 'Port path', font=fontBold)
         port_entry = tk.Entry(root, textvariable = port_var, font=fontNormal)
         port_entry.insert(0, motors.getDefaultPort())
+
+        comment_label = tk.Label(root, text = 'Test comment', font=fontBold)
+        comment_entry = tk.Entry(root, textvariable = comment_var, font=fontNormal)
+        comment_entry.insert(0, "")
         
         reverse_checkbox = tk.Checkbutton(root, text="Reverse", font=fontSmall, height=checkBoxHeight, width=checkBoxWidth, variable=reverse_var)
         
@@ -51,9 +56,11 @@ class GUI:
         
         setup_radar_button = tk.Button(root, text='Setup radar', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: radar.setup_radar(self))
                             
-        drive_button = tk.Button(root, text='Drive motors', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: main.drive_motors(self, distance_var, step_count_var, speed_var, wait_var, reverse_var))
+        drive_button = tk.Button(root, text='Drive motors', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: main.drive_motors(self, distance_var, step_count_var, speed_var, wait_var, reverse_var, comment_var))
                             
-        collect_button = tk.Button(root, text='Start data collection', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: main.collect_data(self, distance_var, step_count_var, speed_var, wait_var, reverse_var))
+        collect_button = tk.Button(root, text='Start collection', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: main.collect_data(self, distance_var, step_count_var, speed_var, wait_var, reverse_var, comment_var))
+        
+        collect_cont_button = tk.Button(root, text='Start continuous collection', font=fontNormal, height=buttonHeight, width=buttonWidth, command=lambda: main.collect_cont_data(self, distance_var, step_count_var, speed_var, wait_var, reverse_var, comment_var))
                             
         kill_button = tk.Button(root, text='Kill', font=fontNormal, height=buttonHeight, width=buttonWidth, bg='red', command=lambda: main.kill(self, root))
                         
@@ -78,11 +85,15 @@ class GUI:
         port_entry.grid(row=i, column=3)
         i += 1
         setup_radar_button.grid(row=i, column=0, columnspan=2)
+        comment_label.grid(row=i, column=2)
+        comment_entry.grid(row=i, column=3)
         i += 1
         drive_button.grid(row=i, column=0, columnspan=2)
         reverse_checkbox.grid(row=i, column=1, columnspan=2, sticky="e")
         i += 1
         collect_button.grid(row=i, column=0, columnspan=2)
+        i += 1
+        collect_cont_button.grid(row=i, column=0, columnspan=2)
         i += 1
         kill_button.grid(row=i, column=0, columnspan=2)
         i += 1

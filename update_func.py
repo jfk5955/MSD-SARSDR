@@ -14,13 +14,28 @@ from scipy.io import savemat
 
 import radar
 
-def load(store):
+def load(store, comment):
     """
     Uses scipy library
     Saves 2D array to .mat file
     """
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    mdic = {"data_mat": store, "label": timestamp}
+    mdic = {"data_mat": store, "label": timestamp, "comment": comment,
+            "fast_time_dim": 1,
+            "sample_rate_Hz": radar.my_sdr.sample_rate,
+            "ramp_bandwidth_Hz": radar.my_sdr.bw,
+            "ramp_time_s": radar.my_sdr.ramp_time / 1e6,
+            "num_chirps": radar.my_sdr.num_chirps,
+            "rx_gain_dB": radar.my_sdr.rx_hardwaregain_chan0,
+            "intermediate_freq_Hz": radar.my_sdr.rx_lo,
+            "radio_freq_Hz": radar.my_sdr.output_freq,
+            "tone_freq_Hz": radar.my_sdr.signal_freq,
+            "slow_time": radar.p2p_slow_time,
+            "datetime_fmt": "YYYY-MM-DDTHH:MM:SS.ffffff",
+            "cross_position": radar.p2p_cross 
+           }
+
+
     # Save to a .mat file
     savemat(f"data/data_mat_{timestamp}.mat", mdic)
     print(f"Matrix saved to 'data_mat_{timestamp}.mat'")
@@ -40,8 +55,8 @@ def update(store, update_cnt, pulse):
     sum_data = chan1 + chan2
 
     # select just the linear portion of the last chirp
-    rx_bursts = np.zeros((radar.num_chirps, radar.good_ramp_samples), dtype=complex)
-    for burst in range(radar.num_chirps):
+    rx_bursts = np.zeros((radar.my_sdr.num_chirps, radar.good_ramp_samples), dtype=complex)
+    for burst in range(radar.my_sdr.num_chirps):
         start_index = radar.start_offset_samples + burst * radar.num_samples_frame
         stop_index = start_index + radar.good_ramp_samples
         rx_bursts[burst] = sum_data[start_index:stop_index]
