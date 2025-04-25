@@ -245,7 +245,7 @@ def collect_data(plutoGui, distance, step_count, speed, wait, comment):
         else:
             plutoGui.log_message("ERROR: Motors are not set up. Click 'Setup motors' and try again")
             break
-        plutoGui.log_message(f"Step {i} complete")
+        plutoGui.log_message(f"{i+1}/{distance} steps completed")
         time.sleep(wait)
 
     update_func.load(store, comment)
@@ -253,7 +253,7 @@ def collect_data(plutoGui, distance, step_count, speed, wait, comment):
     plutoGui.log_message("Done collecting data")
     
 def collect_continuous_data(plutoGui, step_count, speed, comment):
-    cross_pos_count = int(step_count/30)
+    cross_pos_count = abs(int(step_count/30))
     plutoGui.log_message(f"Starting continuous data collection with {cross_pos_count} cross positions")
     
     # Create array to share with load and update
@@ -274,10 +274,10 @@ def collect_continuous_data(plutoGui, step_count, speed, comment):
             store = update_func.update(store, i, i_pulse)
         p2p_slow_time.append(datetime.now().isoformat())
         p2p_cross.append(i*step_count)
-        plutoGui.log_message(f"Cross position {i} complete")
+        plutoGui.log_message(f"{i+1}/{cross_pos_count} cross position collections completed")
         time.sleep(30/(speed/60))
 
     update_func.load(store, comment)
-    
+
     plutoGui.log_message("Done collecting data")
     

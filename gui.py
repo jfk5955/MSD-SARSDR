@@ -47,8 +47,8 @@ class GUI:
         port_entry.insert(0, motors.getDefaultPort())
 
         comment_label = tk.Label(root, text = 'Test comment', font=fontBold)
-        comment_entry = tk.Entry(root, textvariable = comment_var, font=fontNormal)
-        comment_entry.insert(0, "")
+        self.comment_entry = tk.Entry(root, textvariable = comment_var, font=fontNormal)
+        self.comment_entry.insert(0, "")
         
         reverse_checkbox = tk.Checkbutton(root, text="Reverse", font=fontSmall, height=checkBoxHeight, width=checkBoxWidth, variable=reverse_var)
         
@@ -86,7 +86,7 @@ class GUI:
         i += 1
         setup_radar_button.grid(row=i, column=0, columnspan=2)
         comment_label.grid(row=i, column=2)
-        comment_entry.grid(row=i, column=3)
+        self.comment_entry.grid(row=i, column=3)
         i += 1
         drive_button.grid(row=i, column=0, columnspan=2)
         reverse_checkbox.grid(row=i, column=1, columnspan=2, sticky="e")
@@ -99,8 +99,26 @@ class GUI:
         i += 1
         
         root.mainloop()
-    
-    def log_message(self, message="This is a log message!"):
+    '''
+    FIXME (doesn't work): This function is meant to clear the text in the comment box once a data collection is complete
+    so that multiple files don't end up getting the same comment.
+    '''
+    def clear_comment(self):
+        self.comment_entry.config(state=tk.NORMAL)  
+        self.comment_entry.insert(tk.END, "")
+        self.comment_entry.config(state=tk.DISABLED)  
+
+    '''
+    FIXME (doesn't work): This function is meant create a progress bar style message in the log box
+    '''
+    def log_progress(self, message):
+        """Appends a message to the log box."""
+        self.log_t.config(state=tk.NORMAL)
+        self.log_t.insert(tk.ANCHOR, message)
+        self.log_t.config(state=tk.DISABLED)
+        self.log_t.see(tk.END)
+
+    def log_message(self, message):
         """Appends a message to the log box."""
         self.log_t.config(state=tk.NORMAL)  # Enable editing temporarily
         self.log_t.insert(tk.END, message + "\n")  # Insert new log entry
