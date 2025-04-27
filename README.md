@@ -114,7 +114,7 @@ You can now drive the motors and collect data using either of the two profiles:
 - To download the file from the Pi to your laptop:
 
   ```bash
-  scp analog@10.42.0.1:/home/analog/MSD-SARSDR/data/<file name> <path to local destination>/
+  scp analog@10.42.0.1:/home/analog/MSD-SARSDR/data/<file name> /<path to local destination>/
   ```
 
 ---
